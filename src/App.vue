@@ -15,18 +15,23 @@ export default {
   },
   data() {
     return {
-      exerciseList: [
-        { name: 'Bankdrücken', weight: 80, reps: 10 },
-        { name: 'Kniebeuge', weight: 100, reps: 8 },
-        { name: 'Kreuzheben', weight: 120, reps: 6 }
-      ]
-    }
+      exerciseList: []
+    };
+  },
+  mounted() {
+    fetch("https://meinwebtechprojekt.onrender.com")
+        .then(response => response.json())
+        .then(data => {
+          this.exerciseList = data;
+        })
+        .catch(error => {
+          console.error("Fehler beim Laden der Übungen:", error);
+        });
   }
 }
 </script>
 
 <style>
-/* Optional: bisschen Styling */
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   padding: 20px;
