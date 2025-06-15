@@ -17,20 +17,60 @@ export default {
     }
   },
   mounted() {
-    fetch("https://meinwebtechprojekt.onrender.com")
-        .then(response => response.json())
-        .then(data => {
-          this.exerciseList = data;
-        })
-        .catch(error => {
-          console.error("Fehler beim Laden der Übungen:", error);
-        });
+    this.loadExercises();
   },
   methods: {
-    addExercise(exercise) {
-      this.exerciseList.push(exercise);
-      // Optional: POST-Request ans Backend
+    async loadExercises() {
+      try {
+        const response = await fetch("http://localhost:8080/exercises" )
+
+        //fetch("https://meinwebtechprojekt.onrender.com/exercises");
+        if (response.ok) {
+          const data = await response.json();
+          this.exerciseList = data;
+        } else {
+          console.error("Fehler beim Laden der Übungen:", response.status);
+        }
+      } catch (error) {
+        console.error("Fehler beim Laden der Übungen:", error);
+      }
+    },
+
+    async addExercise(exercise) {
+      try {
+        const response = await fetch("http://localhost:8080/exercises", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(exercise)
+        });
+        
+        if (response.ok) {
+          const savedExercise = await response.json();
+          this.exerciseList.push(savedExercise);
+          console.log("Übung erfolgreich gespeichert:", savedExercise);
+        } else {
+          console.error('Fehler beim Speichern der Übung:', response.status);
+          alert('Fehler beim Speichern der Übung');
+        }
+      } catch (error) {
+        console.error('Netzwerkfehler:', error);
+        alert('Verbindungsfehler zum Server');
+      }
     }
   }
 }
 </script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
+
