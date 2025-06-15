@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Gym Tracker</h1>
-    <ExerciseList :exercises="exerciseList" />
+    <ExerciseList :exercises="exerciseList" @add-exercise="addExercise" />
   </div>
 </template>
 
@@ -10,13 +10,11 @@ import ExerciseList from './components/ExerciseList.vue'
 
 export default {
   name: 'App',
-  components: {
-    ExerciseList
-  },
+  components: { ExerciseList },
   data() {
     return {
       exerciseList: []
-    };
+    }
   },
   mounted() {
     fetch("https://meinwebtechprojekt.onrender.com")
@@ -27,13 +25,12 @@ export default {
         .catch(error => {
           console.error("Fehler beim Laden der Übungen:", error);
         });
+  },
+  methods: {
+    addExercise(exercise) {
+      this.exerciseList.push(exercise);
+      // Optional: POST-Request ans Backend
+    }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  padding: 20px;
-}
-</style>
