@@ -13,48 +13,50 @@ export default {
   components: { ExerciseList },
   data() {
     return {
-      exerciseList: []
+      exerciseList: [],
+      apiBase:
+          window.location.hostname === 'localhost'
+              ? 'http://localhost:8080'
+              : 'https://meinwebtechprojekt-5pjt.onrender.com'
     }
   },
   mounted() {
-    this.loadExercises();
+    this.loadExercises()
   },
   methods: {
     async loadExercises() {
       try {
-        const response = await fetch("http://localhost:8080/exercises");
-
-        //fetch("https://meinwebtechprojekt.onrender.com/exercises");
+        const response = await fetch(`${this.apiBase}/exercises`)
         if (response.ok) {
-          const data = await response.json();
-          this.exerciseList = data;
+          const data = await response.json()
+          this.exerciseList = data
         } else {
-          console.error("Fehler beim Laden der Übungen:", response.status);
+          console.error('Fehler beim Laden der Übungen:', response.status)
         }
       } catch (error) {
-        console.error("Fehler beim Laden der Übungen:", error);
+        console.error('Fehler beim Laden der Übungen:', error)
       }
     },
 
     async addExercise(exercise) {
       try {
-        const response = await fetch("http://localhost:8080/exercises", {
+        const response = await fetch(`${this.apiBase}/exercises`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(exercise)
-        });
-        
+        })
+
         if (response.ok) {
-          const savedExercise = await response.json();
-          this.exerciseList.push(savedExercise);
-          console.log("Übung erfolgreich gespeichert:", savedExercise);
+          const savedExercise = await response.json()
+          this.exerciseList.push(savedExercise)
+          console.log('Übung erfolgreich gespeichert:', savedExercise)
         } else {
-          console.error('Fehler beim Speichern der Übung:', response.status);
-          alert('Fehler beim Speichern der Übung');
+          console.error('Fehler beim Speichern der Übung:', response.status)
+          alert('Fehler beim Speichern der Übung')
         }
       } catch (error) {
-        console.error('Netzwerkfehler:', error);
-        alert('Verbindungsfehler zum Server');
+        console.error('Netzwerkfehler:', error)
+        alert('Verbindungsfehler zum Server')
       }
     }
   }
@@ -71,4 +73,3 @@ export default {
   margin-top: 60px;
 }
 </style>
-
