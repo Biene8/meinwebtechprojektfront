@@ -22,7 +22,7 @@ export default {
   methods: {
     async loadExercises() {
       try {
-        const response = await fetch("http://localhost:8080/exercises");
+        const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/exercises");
 
         //fetch("https://meinwebtechprojekt.onrender.com/exercises");
         if (response.ok) {
@@ -38,7 +38,7 @@ export default {
 
     async addExercise(exercise) {
       try {
-        const response = await fetch("http://localhost:8080/exercises", {
+        const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/exercises", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(exercise)
