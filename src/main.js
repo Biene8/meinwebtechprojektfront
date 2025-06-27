@@ -1,4 +1,7 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import TrainingPage from './components/TrainingPage.vue'
+import router from './router'; // Neu hinzugefügt
 
-createApp(App).mount('#app')
+const app = createApp(TrainingPage);
+app.use(router);
+app.mount('#app');

@@ -1,53 +1,27 @@
 <template>
   <div>
     <h2>Übungen</h2>
-    <ul v-if="exercises.length">
-      <li v-for="(exercise, index) in exercises" :key="exercise.id || index">
-        <strong>{{ exercise.name }}</strong>
-        <span v-if="exercise.weight"> - {{ exercise.weight }}kg</span>
-        <span v-if="exercise.reps"> - {{ exercise.reps }} Wiederholungen</span>
+    <ul>
+      <li v-for="exercise in exercises" :key="exercise.id" class="exercise-item">
+        <span>{{ exercise.name }} - {{ exercise.weight }}kg - {{ exercise.reps }} Wiederholungen</span>
+        <button @click="$emit('delete-exercise', exercise.id)" class="delete-button">Löschen</button>
       </li>
     </ul>
-    <p v-else>Keine Übungen gefunden</p>
-    
-    <form @submit.prevent="addExercise" class="exercise-form">
-      <h3>Neue Übung hinzufügen</h3>
-      
-      <div class="form-group">
-        <label for="name">Übungsname:</label>
-        <input 
-          id="name"
-          v-model="newExercise.name" 
-          placeholder="z.B. Bankdrücken" 
-          required 
-        />
+
+    <h3>Übung hinzufügen</h3>
+    <form @submit.prevent="submitExercise">
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" v-model="newExercise.name" required>
       </div>
-      
-      <div class="form-group">
+      <div>
         <label for="weight">Gewicht (kg):</label>
-        <input 
-          id="weight"
-          v-model.number="newExercise.weight" 
-          type="number" 
-          min="0" 
-          step="0.5"
-          placeholder="z.B. 80" 
-          required 
-        />
+        <input type="number" id="weight" v-model.number="newExercise.weight" required>
       </div>
-      
-      <div class="form-group">
+      <div>
         <label for="reps">Wiederholungen:</label>
-        <input 
-          id="reps"
-          v-model.number="newExercise.reps" 
-          type="number" 
-          min="1" 
-          placeholder="z.B. 12" 
-          required 
-        />
+        <input type="number" id="reps" v-model.number="newExercise.reps" required>
       </div>
-      
       <button type="submit">Hinzufügen</button>
     </form>
   </div>
@@ -55,13 +29,7 @@
 
 <script>
 export default {
-  name: 'ExerciseList',
-  props: {
-    exercises: {
-      type: Array,
-      required: true
-    }
-  },
+  props: ['exercises'],
   data() {
     return {
       newExercise: {
@@ -72,76 +40,72 @@ export default {
     }
   },
   methods: {
-    addExercise() {
-      if (this.newExercise.name.trim() && this.newExercise.weight && this.newExercise.reps) {
-        this.$emit('add-exercise', {
-          name: this.newExercise.name.trim(),
-          weight: this.newExercise.weight,
-          reps: this.newExercise.reps
-        });
-        // Formular zurücksetzen
-        this.newExercise = { name: '', weight: null, reps: null };
-      }
+    submitExercise() {
+      this.$emit('add-exercise', { ...this.newExercise });
+      // Formular zurücksetzen
+      this.newExercise.name = '';
+      this.newExercise.weight = null;
+      this.newExercise.reps = null;
     }
   }
 }
 </script>
 
 <style scoped>
-.exercise-form {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #ddd;
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e0e0e0;
+  padding: 10px;
+  margin-bottom: 8px;
   border-radius: 5px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
+.delete-button {
+  background-color: #dc3545; /* Rot */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+.delete-button:hover {
+  background-color: #c82333;
 }
 
-.form-group input {
-  width: 100%;
+form div {
+  margin-bottom: 10px;
+}
+
+form label {
+  display: inline-block;
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
+}
+
+form input[type="text"],
+form input[type="number"] {
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 3px;
-  box-sizing: border-box;
+  border-radius: 4px;
+  width: 150px;
 }
 
-button {
-  background-color: #007bff;
+form button[type="submit"] {
+  background-color: #28a745; /* Grün */
   color: white;
-  padding: 10px 20px;
   border: none;
-  border-radius: 3px;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  width: 100%;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  background: #f8f9fa;
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 3px;
-  border-left: 3px solid #007bff;
+form button[type="submit"]:hover {
+  background-color: #218838;
 }
 </style>
-
