@@ -6,7 +6,7 @@
     </div>
 
     <h1>Training</h1>
-    
+
     <!-- Training Status -->
     <div class="training-status">
       <div v-if="currentTrainingSessionId" class="active-training">
@@ -22,63 +22,66 @@
     <!-- Übungen Liste -->
     <div v-if="currentTrainingSessionId" class="exercises-section">
       <h2>Übungen</h2>
-      
+
       <!-- Neue Übung hinzufügen -->
       <div class="add-exercise-form">
         <h3>Neue Übung hinzufügen</h3>
         <div class="form-group">
-          <input 
-            v-model="newExercise.name" 
-            type="text" 
-            placeholder="Übungsname (z.B. Bankdrücken)" 
-            class="exercise-input"
+          <input
+              v-model="newExercise.name"
+              type="text"
+              placeholder="Übungsname (z.B. Bankdrücken)"
+              class="exercise-input"
           />
-          <input 
-            v-model.number="newExercise.weight" 
-            type="number" 
-            placeholder="Gewicht (kg)" 
-            class="weight-input"
+          <input
+              v-model.number="newExercise.weight"
+              type="number"
+              placeholder="Gewicht (kg)"
+              class="weight-input"
           />
-          <input 
-            v-model.number="newExercise.reps" 
-            type="number" 
-            placeholder="Wiederholungen" 
-            class="reps-input"
+          <input
+              v-model.number="newExercise.reps"
+              type="number"
+              placeholder="Wiederholungen"
+              class="reps-input"
           />
           <button @click="addExercise" class="button add-button">Übung hinzufügen</button>
         </div>
       </div>
 
       <!-- Übungen anzeigen -->
-      <div class="exercises-list">
-        <div v-for="exercise in exerciseList" :key="exercise.id" class="exercise-item">
+      <div v-if="exerciseList.length > 0" class="exercises-list">
+        <div v-for="exercise in exerciseList" :key="exercise.id" class="exercise-card">
           <div class="exercise-header">
-            <input 
-              v-model="exercise.name" 
-              @blur="updateExercise(exercise)"
-              class="exercise-name-input"
+            <input
+                v-model="exercise.name"
+                @blur="updateExercise(exercise)"
+                type="text"
+                class="exercise-name-input"
             />
-            <button @click="deleteExercise(exercise.id)" class="button delete-button">Übung löschen</button>
+            <button @click="deleteExercise(exercise.id)" class="button delete-button">Löschen</button>
           </div>
-          
-          <!-- Sets für diese Übung -->
-          <div class="sets-section">
-            <h4>Sätze:</h4>
+
+          <div class="exercise-content">
+            <!-- Bestehende Sätze anzeigen -->
             <div v-if="exercise.sets && exercise.sets.length > 0" class="sets-list">
+              <h4>Sätze:</h4>
               <div v-for="(set, index) in exercise.sets" :key="set.id" class="set-item">
-                <span class="set-number">Satz {{ index + 1 }}:</span>
-                <input 
-                  v-model.number="set.weight" 
-                  @blur="updateSet(exercise.id, set)"
-                  type="number" 
-                  class="set-weight-input"
+                <span>Satz {{ index + 1 }}:</span>
+                <input
+                    v-model.number="set.weight"
+                    @blur="updateSet(exercise.id, set)"
+                    type="number"
+                    placeholder="Gewicht"
+                    class="set-weight-input"
                 />
-                <span>kg</span>
-                <input 
-                  v-model.number="set.reps" 
-                  @blur="updateSet(exercise.id, set)"
-                  type="number" 
-                  class="set-reps-input"
+                <span>kg,</span>
+                <input
+                    v-model.number="set.reps"
+                    @blur="updateSet(exercise.id, set)"
+                    type="number"
+                    placeholder="Wdh."
+                    class="set-reps-input"
                 />
                 <span>Wdh.</span>
                 <button @click="deleteSet(exercise.id, set.id)" class="button delete-set-button">×</button>
@@ -87,27 +90,30 @@
             <div v-else class="no-sets">
               <p>Noch keine Sätze hinzugefügt</p>
             </div>
-            
+
             <!-- Neuen Satz hinzufügen -->
             <div class="add-set-form">
-              <input 
-                :value="getNewSetWeight(exercise.id)"
-                @input="setNewSetWeight(exercise.id, $event.target.value)"
-                type="number" 
-                placeholder="Gewicht (kg)" 
-                class="new-set-weight"
+              <input
+                  :value="getNewSetWeight(exercise.id)"
+                  @input="setNewSetWeight(exercise.id, $event.target.value)"
+                  type="number"
+                  placeholder="Gewicht (kg)"
+                  class="new-set-weight"
               />
-              <input 
-                :value="getNewSetReps(exercise.id)"
-                @input="setNewSetReps(exercise.id, $event.target.value)"
-                type="number" 
-                placeholder="Wiederholungen" 
-                class="new-set-reps"
+              <input
+                  :value="getNewSetReps(exercise.id)"
+                  @input="setNewSetReps(exercise.id, $event.target.value)"
+                  type="number"
+                  placeholder="Wiederholungen"
+                  class="new-set-reps"
               />
               <button @click="addSet(exercise.id)" class="button add-set-button">+ Satz hinzufügen</button>
             </div>
           </div>
         </div>
+      </div>
+      <div v-else class="no-exercises">
+        <p>Noch keine Übungen hinzugefügt</p>
       </div>
     </div>
   </div>
@@ -132,7 +138,7 @@ export default {
   async mounted() {
     const savedSessionId = localStorage.getItem('currentTrainingSessionId');
     const savedStartTime = localStorage.getItem('sessionStartTime');
-    
+
     if (savedSessionId) {
       this.currentTrainingSessionId = parseInt(savedSessionId);
       this.sessionStartTime = savedStartTime;
@@ -143,41 +149,41 @@ export default {
     getNewSetWeight(exerciseId) {
       return this.newSetData[exerciseId] ? this.newSetData[exerciseId].weight : null;
     },
-    
+
     getNewSetReps(exerciseId) {
       return this.newSetData[exerciseId] ? this.newSetData[exerciseId].reps : null;
     },
-    
+
     setNewSetWeight(exerciseId, value) {
       if (!this.newSetData[exerciseId]) {
-        this.$set(this.newSetData, exerciseId, { weight: null, reps: null });
+        this.newSetData[exerciseId] = { weight: null, reps: null };
       }
-      this.newSetData[exerciseId].weight = parseInt(value) || null;
+      this.newSetData[exerciseId].weight = parseFloat(value) || 0;
     },
-    
+
     setNewSetReps(exerciseId, value) {
       if (!this.newSetData[exerciseId]) {
-        this.$set(this.newSetData, exerciseId, { weight: null, reps: null });
+        this.newSetData[exerciseId] = { weight: null, reps: null };
       }
-      this.newSetData[exerciseId].reps = parseInt(value) || null;
+      this.newSetData[exerciseId].reps = parseInt(value) || 0;
     },
 
     async startNewTraining() {
       try {
-        const response = await fetch("http://localhost:8080/training-sessions", {
+        const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/training-sessions", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         });
-        
+
         if (response.ok) {
           const session = await response.json();
           this.currentTrainingSessionId = session.id;
           this.sessionStartTime = session.startTime;
           this.exerciseList = [];
-          
+
           localStorage.setItem('currentTrainingSessionId', session.id.toString());
           localStorage.setItem('sessionStartTime', session.startTime);
-          
+
           console.log("Neue Trainingseinheit gestartet:", session.id);
         } else {
           alert("Fehler beim Starten der Trainingseinheit.");
@@ -190,16 +196,16 @@ export default {
 
     async loadExercisesForCurrentSession() {
       if (!this.currentTrainingSessionId) return;
-      
+
       try {
-        const response = await fetch(`http://localhost:8080/training-sessions/${this.currentTrainingSessionId}`);
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}`);
         if (response.ok) {
           const sessionData = await response.json();
           this.exerciseList = sessionData.exercises || [];
-          
+
           this.exerciseList.forEach(exercise => {
             if (!this.newSetData[exercise.id]) {
-              this.$set(this.newSetData, exercise.id, { weight: null, reps: null });
+              this.newSetData[exercise.id] = { weight: null, reps: null };
             }
           });
         }
@@ -213,32 +219,42 @@ export default {
         alert("Bitte starten Sie zuerst ein Training.");
         return;
       }
-      
+
       if (!this.newExercise.name.trim()) {
         alert("Bitte geben Sie einen Übungsnamen ein.");
         return;
       }
 
-      try {
-        const exerciseData = {
-          name: this.newExercise.name,
-          weight: this.newExercise.weight,
-          reps: this.newExercise.reps
-        };
+      const exerciseData = {
+        name: this.newExercise.name,
+        sets: [
+          {
+            weight: parseFloat(this.newExercise.weight) || 0,
+            reps: parseInt(this.newExercise.reps) || 0
+          }
+        ]
+      };
 
-        const response = await fetch(`http://localhost:8080/training-sessions/${this.currentTrainingSessionId}/exercises`, {
+      try {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}/exercises`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(exerciseData)
         });
 
         if (response.ok) {
+          const savedExercise = await response.json();
+          this.exerciseList.push(savedExercise);
+
+          this.newSetData[savedExercise.id] = { weight: null, reps: null };
+
           this.newExercise = { name: '', weight: null, reps: null };
+
           await this.loadExercisesForCurrentSession();
         } else {
-          const errorText = await response.text();
-          console.error('Server-Fehler:', errorText);
-          alert('Fehler beim Speichern der Übung');
+          const errorData = await response.json();
+          console.error('Fehler beim Speichern der Übung:', response.status, errorData);
+          alert('Fehler beim Speichern der Übung: ' + (errorData.message || 'Unbekannter Fehler'));
         }
       } catch (error) {
         console.error('Netzwerkfehler:', error);
@@ -248,7 +264,7 @@ export default {
 
     async updateExercise(exercise) {
       try {
-        const response = await fetch(`http://localhost:8080/exercises/${exercise.id}`, {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${exercise.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: exercise.name })
@@ -265,19 +281,19 @@ export default {
     async addSet(exerciseId) {
       const weight = this.getNewSetWeight(exerciseId);
       const reps = this.getNewSetReps(exerciseId);
-      
+
       if (!weight || !reps) {
         alert("Bitte geben Sie Gewicht und Wiederholungen ein.");
         return;
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/exercises/${exerciseId}/sets`, {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${exerciseId}/sets`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            weight: weight,
-            reps: reps
+            weight: parseFloat(weight) || 0,
+            reps: parseInt(reps) || 0
           })
         });
 
@@ -295,12 +311,12 @@ export default {
 
     async updateSet(exerciseId, set) {
       try {
-        const response = await fetch(`http://localhost:8080/exercises/${exerciseId}/sets/${set.id}`, {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/sets/${set.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            weight: set.weight,
-            reps: set.reps
+            weight: parseFloat(set.weight) || 0,
+            reps: parseInt(set.reps) || 0
           })
         });
 
@@ -316,7 +332,7 @@ export default {
       if (!confirm('Möchten Sie diesen Satz wirklich löschen?')) return;
 
       try {
-        const response = await fetch(`http://localhost:8080/exercises/${exerciseId}/sets/${setId}`, {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/sets/${setId}`, {
           method: 'DELETE'
         });
 
@@ -335,12 +351,12 @@ export default {
       if (!confirm('Möchten Sie diese Übung wirklich löschen?')) return;
 
       try {
-        const response = await fetch(`http://localhost:8080/exercises/${id}`, {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${id}`, {
           method: 'DELETE'
         });
 
         if (response.ok) {
-          await this.loadExercisesForCurrentSession();
+          this.exerciseList = this.exerciseList.filter(exercise => exercise.id !== id);
           delete this.newSetData[id];
         } else {
           alert('Fehler beim Löschen der Übung');
@@ -355,25 +371,27 @@ export default {
       if (!this.currentTrainingSessionId) return;
 
       try {
-        const response = await fetch(`http://localhost:8080/training-sessions/${this.currentTrainingSessionId}/end`, {
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}/end`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.ok) {
           alert("Training erfolgreich beendet!");
-          
+
           localStorage.removeItem('currentTrainingSessionId');
           localStorage.removeItem('sessionStartTime');
-          
+
           this.currentTrainingSessionId = null;
           this.sessionStartTime = null;
           this.exerciseList = [];
           this.newSetData = {};
-          
+
           this.$router.push('/');
         } else {
-          alert('Fehler beim Beenden des Trainings');
+          const errorData = await response.json();
+          console.error('Fehler beim Beenden des Trainings:', response.status, errorData);
+          alert('Fehler beim Beenden des Trainings: ' + (errorData.message || 'Unbekannter Fehler'));
         }
       } catch (error) {
         console.error('Netzwerkfehler:', error);
@@ -396,28 +414,25 @@ export default {
 
 <style scoped>
 #training-page {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  color: #2c3e50;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
 .header-buttons {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .button {
   padding: 10px 20px;
-  font-size: 1em;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: none;
+  font-size: 14px;
+  transition: background-color 0.3s;
 }
 
 .nav-button {
@@ -439,7 +454,7 @@ export default {
 }
 
 .end-training-button:disabled {
-  background-color: #ccc;
+  background-color: #6c757d;
   cursor: not-allowed;
 }
 
@@ -448,74 +463,80 @@ export default {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 30px;
-  text-align: center;
 }
 
 .active-training {
   color: #28a745;
 }
 
+.no-training {
+  color: #6c757d;
+  text-align: center;
+}
+
 .start-new-training-button {
   background-color: #28a745;
   color: white;
-  padding: 15px 30px;
-  font-size: 1.1em;
+  margin-top: 10px;
 }
 
 .start-new-training-button:hover {
   background-color: #218838;
 }
 
-.exercises-section {
-  margin-top: 30px;
+.exercises-section h2 {
+  color: #343a40;
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 10px;
 }
 
 .add-exercise-form {
-  background-color: #f8f9fa;
+  background-color: #e9ecef;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 30px;
+}
+
+.add-exercise-form h3 {
+  margin-top: 0;
+  color: #495057;
 }
 
 .form-group {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
 }
 
-.exercise-input {
-  flex: 2;
-  min-width: 200px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.weight-input, .reps-input {
+.exercise-input, .weight-input, .reps-input {
   flex: 1;
-  min-width: 100px;
+  min-width: 150px;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ced4da;
   border-radius: 4px;
+  font-size: 14px;
 }
 
 .add-button {
   background-color: #007bff;
   color: white;
+  white-space: nowrap;
 }
 
 .add-button:hover {
   background-color: #0056b3;
 }
 
-.exercise-item {
-  background-color: #fff;
-  border: 1px solid #ddd;
+.exercises-list {
+  display: grid;
+  gap: 20px;
+}
+
+.exercise-card {
+  border: 1px solid #dee2e6;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
+  background-color: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -524,18 +545,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  flex-wrap: wrap;
-  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .exercise-name-input {
-  font-size: 1.2em;
-  font-weight: bold;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
   flex: 1;
-  min-width: 200px;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 .delete-button {
@@ -547,49 +568,45 @@ export default {
   background-color: #c82333;
 }
 
-.sets-section {
-  margin-top: 15px;
-}
-
-.sets-list {
-  margin: 15px 0;
+.sets-list h4 {
+  margin: 0 0 10px 0;
+  color: #495057;
 }
 
 .set-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding: 10px;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px;
   background-color: #f8f9fa;
   border-radius: 4px;
-  flex-wrap: wrap;
-}
-
-.set-number {
-  font-weight: bold;
-  min-width: 60px;
 }
 
 .set-weight-input, .set-reps-input {
-  width: 80px;
-  padding: 5px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  width: 60px;
+  padding: 4px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  text-align: center;
 }
 
 .delete-set-button {
   background-color: #dc3545;
   color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  padding: 0;
-  font-size: 1.2em;
+  padding: 2px 6px;
+  font-size: 12px;
+  min-width: auto;
 }
 
 .delete-set-button:hover {
   background-color: #c82333;
+}
+
+.no-sets {
+  color: #6c757d;
+  font-style: italic;
+  margin: 10px 0;
 }
 
 .add-set-form {
@@ -597,60 +614,60 @@ export default {
   gap: 10px;
   align-items: center;
   margin-top: 15px;
-  flex-wrap: wrap;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
 }
 
 .new-set-weight, .new-set-reps {
   width: 100px;
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #ced4da;
   border-radius: 4px;
 }
 
 .add-set-button {
   background-color: #28a745;
   color: white;
+  white-space: nowrap;
 }
 
 .add-set-button:hover {
   background-color: #218838;
 }
 
-.no-sets {
+.no-exercises {
+  text-align: center;
   color: #6c757d;
   font-style: italic;
-  margin: 15px 0;
+  padding: 40px;
 }
 
 @media (max-width: 768px) {
-  .header-buttons {
-    flex-direction: column;
-  }
-  
   .form-group {
     flex-direction: column;
   }
   
   .exercise-input, .weight-input, .reps-input {
-    width: 100%;
+    min-width: auto;
   }
   
   .exercise-header {
     flex-direction: column;
-    align-items: stretch;
+    gap: 10px;
   }
   
-  .set-item {
-    flex-direction: column;
-    align-items: stretch;
+  .exercise-name-input {
+    margin-right: 0;
+    margin-bottom: 10px;
   }
   
   .add-set-form {
     flex-direction: column;
+    align-items: stretch;
   }
   
   .new-set-weight, .new-set-reps {
-    width: 100%;
+    width: auto;
   }
 }
 </style>
