@@ -167,7 +167,7 @@ export default {
         const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/training-sessions", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
-        } );
+        }  );
 
         if (response.ok) {
           const session = await response.json();
@@ -192,7 +192,7 @@ export default {
       if (!this.currentTrainingSessionId) return;
 
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}` );
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}`  );
         if (response.ok) {
           const sessionData = await response.json();
           this.exerciseList = sessionData.exercises || [];
@@ -219,13 +219,18 @@ export default {
         return;
       }
 
-      try {
-        const exerciseData = {
-          name: this.newExercise.name,
-          weight: this.newExercise.weight,
-          reps: this.newExercise.reps
-        };
+      // KORREKTUR HIER: Datenstruktur für das Backend anpassen
+      const exerciseData = {
+        name: this.newExercise.name,
+        sets: [
+          {
+            weight: parseFloat(this.newExercise.weight),
+            reps: parseInt(this.newExercise.reps)
+          }
+        ]
+      };
 
+      try {
         const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}/exercises`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -242,7 +247,9 @@ export default {
 
           await this.loadExercisesForCurrentSession();
         } else {
-          alert('Fehler beim Speichern der Übung');
+          const errorData = await response.json(); // Fehlerdetails vom Server lesen
+          console.error('Fehler beim Speichern der Übung:', response.status, errorData);
+          alert('Fehler beim Speichern der Übung: ' + (errorData.message || 'Unbekannter Fehler'));
         }
       } catch (error) {
         console.error('Netzwerkfehler:', error);
@@ -361,7 +368,7 @@ export default {
       try {
         const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}/end`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' } // KORREKTUR HIER: Header hinzugefügt
         } );
 
         if (response.ok) {
@@ -377,7 +384,9 @@ export default {
 
           this.$router.push('/');
         } else {
-          alert('Fehler beim Beenden des Trainings');
+          const errorData = await response.json(); // Fehlerdetails vom Server lesen
+          console.error('Fehler beim Beenden des Trainings:', response.status, errorData);
+          alert('Fehler beim Beenden des Trainings: ' + (errorData.message || 'Unbekannter Fehler'));
         }
       } catch (error) {
         console.error('Netzwerkfehler:', error);
@@ -397,6 +406,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 #training-page {
