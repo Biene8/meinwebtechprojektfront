@@ -81,7 +81,6 @@ p {
   background-color: #007B9E;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .button-container {
     flex-direction: column;

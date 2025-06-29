@@ -6,7 +6,7 @@
     </div>
 
     <h1>Training</h1>
-
+    
     <!-- Training Status -->
     <div class="training-status">
       <div v-if="currentTrainingSessionId" class="active-training">
@@ -22,28 +22,28 @@
     <!-- Übungen Liste -->
     <div v-if="currentTrainingSessionId" class="exercises-section">
       <h2>Übungen</h2>
-
+      
       <!-- Neue Übung hinzufügen -->
       <div class="add-exercise-form">
         <h3>Neue Übung hinzufügen</h3>
         <div class="form-group">
-          <input
-              v-model="newExercise.name"
-              type="text"
-              placeholder="Übungsname (z.B. Bankdrücken)"
-              class="exercise-input"
+          <input 
+            v-model="newExercise.name" 
+            type="text" 
+            placeholder="Übungsname (z.B. Bankdrücken)" 
+            class="exercise-input"
           />
-          <input
-              v-model.number="newExercise.weight"
-              type="number"
-              placeholder="Gewicht (kg)"
-              class="weight-input"
+          <input 
+            v-model.number="newExercise.weight" 
+            type="number" 
+            placeholder="Gewicht (kg)" 
+            class="weight-input"
           />
-          <input
-              v-model.number="newExercise.reps"
-              type="number"
-              placeholder="Wiederholungen"
-              class="reps-input"
+          <input 
+            v-model.number="newExercise.reps" 
+            type="number" 
+            placeholder="Wiederholungen" 
+            class="reps-input"
           />
           <button @click="addExercise" class="button add-button">Übung hinzufügen</button>
         </div>
@@ -53,32 +53,32 @@
       <div class="exercises-list">
         <div v-for="exercise in exerciseList" :key="exercise.id" class="exercise-item">
           <div class="exercise-header">
-            <input
-                v-model="exercise.name"
-                @blur="updateExercise(exercise)"
-                class="exercise-name-input"
+            <input 
+              v-model="exercise.name" 
+              @blur="updateExercise(exercise)"
+              class="exercise-name-input"
             />
             <button @click="deleteExercise(exercise.id)" class="button delete-button">Übung löschen</button>
           </div>
-
+          
           <!-- Sets für diese Übung -->
           <div class="sets-section">
             <h4>Sätze:</h4>
             <div v-if="exercise.sets && exercise.sets.length > 0" class="sets-list">
               <div v-for="(set, index) in exercise.sets" :key="set.id" class="set-item">
                 <span class="set-number">Satz {{ index + 1 }}:</span>
-                <input
-                    v-model.number="set.weight"
-                    @blur="updateSet(exercise.id, set)"
-                    type="number"
-                    class="set-weight-input"
+                <input 
+                  v-model.number="set.weight" 
+                  @blur="updateSet(exercise.id, set)"
+                  type="number" 
+                  class="set-weight-input"
                 />
                 <span>kg</span>
-                <input
-                    v-model.number="set.reps"
-                    @blur="updateSet(exercise.id, set)"
-                    type="number"
-                    class="set-reps-input"
+                <input 
+                  v-model.number="set.reps" 
+                  @blur="updateSet(exercise.id, set)"
+                  type="number" 
+                  class="set-reps-input"
                 />
                 <span>Wdh.</span>
                 <button @click="deleteSet(exercise.id, set.id)" class="button delete-set-button">×</button>
@@ -87,22 +87,22 @@
             <div v-else class="no-sets">
               <p>Noch keine Sätze hinzugefügt</p>
             </div>
-
+            
             <!-- Neuen Satz hinzufügen -->
             <div class="add-set-form">
-              <input
-                  :value="getNewSetWeight(exercise.id)"
-                  @input="setNewSetWeight(exercise.id, $event.target.value)"
-                  type="number"
-                  placeholder="Gewicht (kg)"
-                  class="new-set-weight"
+              <input 
+                :value="getNewSetWeight(exercise.id)"
+                @input="setNewSetWeight(exercise.id, $event.target.value)"
+                type="number" 
+                placeholder="Gewicht (kg)" 
+                class="new-set-weight"
               />
-              <input
-                  :value="getNewSetReps(exercise.id)"
-                  @input="setNewSetReps(exercise.id, $event.target.value)"
-                  type="number"
-                  placeholder="Wiederholungen"
-                  class="new-set-reps"
+              <input 
+                :value="getNewSetReps(exercise.id)"
+                @input="setNewSetReps(exercise.id, $event.target.value)"
+                type="number" 
+                placeholder="Wiederholungen" 
+                class="new-set-reps"
               />
               <button @click="addSet(exercise.id)" class="button add-set-button">+ Satz hinzufügen</button>
             </div>
@@ -132,7 +132,7 @@ export default {
   async mounted() {
     const savedSessionId = localStorage.getItem('currentTrainingSessionId');
     const savedStartTime = localStorage.getItem('sessionStartTime');
-
+    
     if (savedSessionId) {
       this.currentTrainingSessionId = parseInt(savedSessionId);
       this.sessionStartTime = savedStartTime;
@@ -143,18 +143,18 @@ export default {
     getNewSetWeight(exerciseId) {
       return this.newSetData[exerciseId] ? this.newSetData[exerciseId].weight : null;
     },
-
+    
     getNewSetReps(exerciseId) {
       return this.newSetData[exerciseId] ? this.newSetData[exerciseId].reps : null;
     },
-
+    
     setNewSetWeight(exerciseId, value) {
       if (!this.newSetData[exerciseId]) {
         this.$set(this.newSetData, exerciseId, { weight: null, reps: null });
       }
       this.newSetData[exerciseId].weight = parseInt(value) || null;
     },
-
+    
     setNewSetReps(exerciseId, value) {
       if (!this.newSetData[exerciseId]) {
         this.$set(this.newSetData, exerciseId, { weight: null, reps: null });
@@ -164,20 +164,20 @@ export default {
 
     async startNewTraining() {
       try {
-        const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/training-sessions", {
+        const response = await fetch("http://localhost:8080/training-sessions", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
-        }  );
-
+        });
+        
         if (response.ok) {
           const session = await response.json();
           this.currentTrainingSessionId = session.id;
           this.sessionStartTime = session.startTime;
           this.exerciseList = [];
-
+          
           localStorage.setItem('currentTrainingSessionId', session.id.toString());
           localStorage.setItem('sessionStartTime', session.startTime);
-
+          
           console.log("Neue Trainingseinheit gestartet:", session.id);
         } else {
           alert("Fehler beim Starten der Trainingseinheit.");
@@ -190,13 +190,13 @@ export default {
 
     async loadExercisesForCurrentSession() {
       if (!this.currentTrainingSessionId) return;
-
+      
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}`  );
+        const response = await fetch(`http://localhost:8080/training-sessions/${this.currentTrainingSessionId}`);
         if (response.ok) {
           const sessionData = await response.json();
           this.exerciseList = sessionData.exercises || [];
-
+          
           this.exerciseList.forEach(exercise => {
             if (!this.newSetData[exercise.id]) {
               this.$set(this.newSetData, exercise.id, { weight: null, reps: null });
@@ -213,43 +213,32 @@ export default {
         alert("Bitte starten Sie zuerst ein Training.");
         return;
       }
-
+      
       if (!this.newExercise.name.trim()) {
         alert("Bitte geben Sie einen Übungsnamen ein.");
         return;
       }
 
-      // KORREKTUR HIER: Datenstruktur für das Backend anpassen
-      const exerciseData = {
-        name: this.newExercise.name,
-        sets: [
-          {
-            weight: parseFloat(this.newExercise.weight),
-            reps: parseInt(this.newExercise.reps)
-          }
-        ]
-      };
-
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}/exercises`, {
+        const exerciseData = {
+          name: this.newExercise.name,
+          weight: this.newExercise.weight,
+          reps: this.newExercise.reps
+        };
+
+        const response = await fetch(`http://localhost:8080/training-sessions/${this.currentTrainingSessionId}/exercises`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(exerciseData )
+          body: JSON.stringify(exerciseData)
         });
 
         if (response.ok) {
-          const savedExercise = await response.json();
-          this.exerciseList.push(savedExercise);
-
-          this.$set(this.newSetData, savedExercise.id, { weight: null, reps: null });
-
           this.newExercise = { name: '', weight: null, reps: null };
-
           await this.loadExercisesForCurrentSession();
         } else {
-          const errorData = await response.json(); // Fehlerdetails vom Server lesen
-          console.error('Fehler beim Speichern der Übung:', response.status, errorData);
-          alert('Fehler beim Speichern der Übung: ' + (errorData.message || 'Unbekannter Fehler'));
+          const errorText = await response.text();
+          console.error('Server-Fehler:', errorText);
+          alert('Fehler beim Speichern der Übung');
         }
       } catch (error) {
         console.error('Netzwerkfehler:', error);
@@ -259,10 +248,10 @@ export default {
 
     async updateExercise(exercise) {
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${exercise.id}`, {
+        const response = await fetch(`http://localhost:8080/exercises/${exercise.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: exercise.name } )
+          body: JSON.stringify({ name: exercise.name })
         });
 
         if (!response.ok) {
@@ -276,20 +265,20 @@ export default {
     async addSet(exerciseId) {
       const weight = this.getNewSetWeight(exerciseId);
       const reps = this.getNewSetReps(exerciseId);
-
+      
       if (!weight || !reps) {
         alert("Bitte geben Sie Gewicht und Wiederholungen ein.");
         return;
       }
 
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${exerciseId}/sets`, {
+        const response = await fetch(`http://localhost:8080/exercises/${exerciseId}/sets`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             weight: weight,
             reps: reps
-          } )
+          })
         });
 
         if (response.ok) {
@@ -306,13 +295,13 @@ export default {
 
     async updateSet(exerciseId, set) {
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${exerciseId}/sets/${set.id}`, {
+        const response = await fetch(`http://localhost:8080/exercises/${exerciseId}/sets/${set.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             weight: set.weight,
             reps: set.reps
-          } )
+          })
         });
 
         if (!response.ok) {
@@ -327,9 +316,9 @@ export default {
       if (!confirm('Möchten Sie diesen Satz wirklich löschen?')) return;
 
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${exerciseId}/sets/${setId}`, {
+        const response = await fetch(`http://localhost:8080/exercises/${exerciseId}/sets/${setId}`, {
           method: 'DELETE'
-        } );
+        });
 
         if (response.ok) {
           await this.loadExercisesForCurrentSession();
@@ -346,12 +335,12 @@ export default {
       if (!confirm('Möchten Sie diese Übung wirklich löschen?')) return;
 
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/exercises/${id}`, {
+        const response = await fetch(`http://localhost:8080/exercises/${id}`, {
           method: 'DELETE'
-        } );
+        });
 
         if (response.ok) {
-          this.exerciseList = this.exerciseList.filter(exercise => exercise.id !== id);
+          await this.loadExercisesForCurrentSession();
           delete this.newSetData[id];
         } else {
           alert('Fehler beim Löschen der Übung');
@@ -366,27 +355,25 @@ export default {
       if (!this.currentTrainingSessionId) return;
 
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${this.currentTrainingSessionId}/end`, {
+        const response = await fetch(`http://localhost:8080/training-sessions/${this.currentTrainingSessionId}/end`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' } // KORREKTUR HIER: Header hinzugefügt
-        } );
+          headers: { 'Content-Type': 'application/json' }
+        });
 
         if (response.ok) {
           alert("Training erfolgreich beendet!");
-
+          
           localStorage.removeItem('currentTrainingSessionId');
           localStorage.removeItem('sessionStartTime');
-
+          
           this.currentTrainingSessionId = null;
           this.sessionStartTime = null;
           this.exerciseList = [];
           this.newSetData = {};
-
+          
           this.$router.push('/');
         } else {
-          const errorData = await response.json(); // Fehlerdetails vom Server lesen
-          console.error('Fehler beim Beenden des Trainings:', response.status, errorData);
-          alert('Fehler beim Beenden des Trainings: ' + (errorData.message || 'Unbekannter Fehler'));
+          alert('Fehler beim Beenden des Trainings');
         }
       } catch (error) {
         console.error('Netzwerkfehler:', error);
@@ -406,7 +393,6 @@ export default {
   }
 }
 </script>
-
 
 <style scoped>
 #training-page {
@@ -640,31 +626,32 @@ export default {
   .header-buttons {
     flex-direction: column;
   }
-
+  
   .form-group {
     flex-direction: column;
   }
-
+  
   .exercise-input, .weight-input, .reps-input {
     width: 100%;
   }
-
+  
   .exercise-header {
     flex-direction: column;
     align-items: stretch;
   }
-
+  
   .set-item {
     flex-direction: column;
     align-items: stretch;
   }
-
+  
   .add-set-form {
     flex-direction: column;
   }
-
+  
   .new-set-weight, .new-set-reps {
     width: 100%;
   }
 }
 </style>
+

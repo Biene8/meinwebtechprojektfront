@@ -79,10 +79,9 @@ export default {
     async loadTrainingHistory() {
       this.loading = true;
       try {
-        const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/training-sessions");
+        const response = await fetch("http://localhost:8080/training-sessions");
         if (response.ok) {
           const data = await response.json();
-          // Sortiere Sessions nach Datum (neueste zuerst)
           this.trainingSessions = data.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
         } else {
           console.error("Fehler beim Laden der Trainingshistorie:", response.status);
@@ -102,15 +101,13 @@ export default {
       }
 
       try {
-        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${sessionId}`, {
+        const response = await fetch(`http://localhost:8080/training-sessions/${sessionId}`, {
           method: 'DELETE'
         });
 
         if (response.ok) {
-          // Session aus der Liste entfernen
           this.trainingSessions = this.trainingSessions.filter(session => session.id !== sessionId);
           
-          // Prüfen ob die gelöschte Session die aktuelle war
           const currentSessionId = localStorage.getItem('currentTrainingSessionId');
           if (currentSessionId && parseInt(currentSessionId) === sessionId) {
             localStorage.removeItem('currentTrainingSessionId');
@@ -120,7 +117,6 @@ export default {
           console.log(`Trainingseinheit ${sessionId} erfolgreich gelöscht.`);
         } else if (response.status === 404) {
           alert('Trainingseinheit nicht gefunden.');
-          // Session trotzdem aus der Liste entfernen
           this.trainingSessions = this.trainingSessions.filter(session => session.id !== sessionId);
         } else {
           alert('Fehler beim Löschen der Trainingseinheit.');
@@ -407,7 +403,6 @@ export default {
   color: #2c3e50;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .header {
     flex-direction: column;

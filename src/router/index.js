@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import StartPage from '../components/StartPage.vue'; // Wird später erstellt
-import TrainingPage from '../components/TrainingPage.vue'; // Wird später erstellt (jetzige App)
-import TrainingHistory from '../components/TrainingHistory.vue'; // Wird später erstellt
+import StartPage from '../components/StartPage.vue';
+import TrainingPage from '../components/TrainingPage.vue';
+import TrainingHistory from '../components/TrainingHistory.vue';
 
 const routes = [
     {
@@ -27,3 +27,4 @@ const router = createRouter({
 });
 
 export default router;
+
