@@ -42,6 +42,8 @@ p {
 .button-container {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .button {
@@ -60,7 +62,7 @@ p {
 }
 
 .start-training-button {
-  background-color: #4CAF50; /* Grünton */
+  background-color: #4CAF50;
   color: white;
   border: none;
 }
@@ -70,7 +72,7 @@ p {
 }
 
 .view-history-button {
-  background-color: #008CBA; /* Blauton */
+  background-color: #008CBA;
   color: white;
   border: none;
 }
@@ -78,4 +80,18 @@ p {
 .view-history-button:hover {
   background-color: #007B9E;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .button {
+    width: 200px;
+    margin: 5px 0;
+  }
+}
 </style>
+
