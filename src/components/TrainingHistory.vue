@@ -79,7 +79,8 @@ export default {
     async loadTrainingHistory() {
       this.loading = true;
       try {
-        const response = await fetch("http://localhost:8080/training-sessions");
+        // KORREKTUR: Verwende die korrekte Backend-URL für deployed Version
+        const response = await fetch("https://meinwebtechprojekt-5pjt.onrender.com/training-sessions");
         if (response.ok) {
           const data = await response.json();
           this.trainingSessions = data.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
@@ -101,7 +102,8 @@ export default {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/training-sessions/${sessionId}`, {
+        // KORREKTUR: Verwende die korrekte Backend-URL für deployed Version
+        const response = await fetch(`https://meinwebtechprojekt-5pjt.onrender.com/training-sessions/${sessionId}`, {
           method: 'DELETE'
         });
 
