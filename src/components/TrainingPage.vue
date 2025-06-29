@@ -19,11 +19,9 @@
       </div>
     </div>
 
-    <!-- Übungen Liste -->
     <div v-if="currentTrainingSessionId" class="exercises-section">
       <h2>Übungen</h2>
 
-      <!-- Neue Übung hinzufügen -->
       <div class="add-exercise-form">
         <h3>Neue Übung hinzufügen</h3>
         <div class="form-group">
@@ -49,7 +47,6 @@
         </div>
       </div>
 
-      <!-- Übungen anzeigen -->
       <div v-if="exerciseList.length > 0" class="exercises-list">
         <div v-for="exercise in exerciseList" :key="exercise.id" class="exercise-card">
           <div class="exercise-header">
@@ -91,7 +88,6 @@
               <p>Noch keine Sätze hinzugefügt</p>
             </div>
 
-            <!-- Neuen Satz hinzufügen -->
             <div class="add-set-form">
               <input
                   :value="getNewSetWeight(exercise.id)"
